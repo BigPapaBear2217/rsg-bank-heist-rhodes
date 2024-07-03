@@ -226,28 +226,71 @@ Citizen.CreateThread(function()
 		args = {},
 	})
 end)
+----------------------------------------------------
+-- Locals
+local callback
 
+-- Function to start the safe cracking game
+local function start_safe_crack(game_data, game_callback)
+    if active then return end
+
+    active = true
+    callback = game_callback
+
+    SetNuiFocus(true, true)
+
+    SendNUIMessage({
+        action = 'start_minigame',
+        game = 'safe_crack',
+        data = {
+            style = game_data.style,
+            difficulty = game_data.difficulty
+        }
+    })
+end
+
+-- NUI callback to end the game
+RegisterNUICallback('safe_crack_end', function(data)
+    SetNuiFocus(false, false)
+    active = false
+    callback(data.success)
+end)
+
+-- Export the safe cracking game function
+exports('safe_crack', start_safe_crack)
+
+-----------------------------------------------------
 -- loot vault1
 RegisterNetEvent('rsg-rhodesbankheist:client:checkvault1', function()
-	local player = PlayerPedId()
-	SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
-	if robberystarted == true and vault1 == false then
-			local animDict = "script_ca@cachr@ig@ig4_vaultloot"
-			local anim = "ig13_14_grab_money_front01_player_zero"
-			RequestAnimDict(animDict)
-            while ( not HasAnimDictLoaded(animDict) ) do
-				Wait(100)
+    local player = PlayerPedId()
+    SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
+    if robberystarted == true and vault1 == false then
+        exports['boii_minigames']:safe_crack({
+            style = 'default', -- Style template
+            difficulty = 2 -- Difficulty level (1-5 recommended)
+        }, function(success)
+            if success then
+                local animDict = "script_ca@cachr@ig@ig4_vaultloot"
+                local anim = "ig13_14_grab_money_front01_player_zero"
+                RequestAnimDict(animDict)
+                while (not HasAnimDictLoaded(animDict)) do
+                    Wait(100)
+                end
+                TaskPlayAnim(player, animDict, anim, 8.0, -8.0, 10000, 1, 0, true, 0, false, 0, false)
+                Wait(10000)
+                ClearPedTasks(player)
+                SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
+                TriggerServerEvent('rsg-rhodesbankheist:server:reward')
+                vault1 = true
+            else
+                TriggerEvent('rNotify:NotifyLeft', "cant loot vault !", "idiot", "generic_textures", "tick", 4000)
             end
-            TaskPlayAnim(player, animDict, anim, 8.0, -8.0, 10000, 1, 0, true, 0, false, 0, false)
-			Wait(10000)
-			ClearPedTasks(player)
-			SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
-			TriggerServerEvent('rsg-rhodesbankheist:server:reward')
-			vault1 = true
-	else
-		TriggerEvent('rNotify:NotifyLeft', "cant loot vault !", "idiot", "generic_textures", "tick", 4000)
-	end
+        end)
+    else
+        TriggerEvent('rNotify:NotifyLeft', "cant loot vault !", "idiot", "generic_textures", "tick", 4000)
+    end
 end)
+
 
 ------------------------------------------------------------------------------------------------------------------------
 

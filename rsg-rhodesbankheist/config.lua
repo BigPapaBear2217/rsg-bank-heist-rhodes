@@ -23,10 +23,10 @@ Config.VaultDoors = {
 Config.RewardItems = {
     'goldbar', -- example
 	'goldwatch', -- example
-	--'moneybag', -- example
-	--'ruby', -- example
-	--'diamond', -- example
-	--'emerald', -- example
+	'moneybag', -- example
+	'ruby', -- example
+	'diamond', -- example
+	'emerald', -- example
 }
 
 -- set item rewards amount
