@@ -28,7 +28,7 @@ Citizen.CreateThread(function()
 	while true do
 		Wait(0)
 		local pos, awayFromObject = GetEntityCoords(PlayerPedId()), true
-		local object = Citizen.InvokeNative(0xF7424890E4A094C0, 2058564250, 0)
+        local object = Citizen.InvokeNative(0xF7424890E4A094C0, 1340831050, 0)
 		if object ~= 0 and lockdownSecondsRemaining == 0 and lockpicked == false then
 			local objectPos = GetEntityCoords(object)
 			if #(pos - objectPos) < 3.0 then
@@ -40,7 +40,7 @@ Citizen.CreateThread(function()
 						if CurrentLawmen >= Config.MinimumLawmen then
 							local hasItem = RSGCore.Functions.HasItem('lockpick', 1)
 							if hasItem then
-								TriggerServerEvent('rsg-rhodesbankheist:server:removeItem', 'lockpick', 1)
+                                TriggerServerEvent('rsg-valentinebankheist:server:removeItem', 'lockpick', 1)
 								TriggerEvent('rsg-lockpick:client:openLockpick', lockpickFinish)
 							else
 								TriggerEvent('rNotify:NotifyLeft', "Ai Nevoie De Un Lockpick !", "pentru a sparge usa", "generic_textures", "tick", 4000)
@@ -64,7 +64,7 @@ function lockpickFinish(success)
         local coords = GetEntityCoords(player)
         TriggerServerEvent("BANK:ALARM", coords, player)
 		TriggerEvent('rNotify:NotifyLeft', "Lockpick Reusit Dorele!", "Ai spart Usa", "generic_textures", "tick", 4000)
-        Citizen.InvokeNative(0x6BAB9442830C7F53, 2058564250, 0)
+        Citizen.InvokeNative(0x6BAB9442830C7F53, 1340831050, 0)
 		lockpicked = true
 		robberystarted = true
 		handleLockdown()
@@ -82,7 +82,7 @@ RegisterNetEvent('rsg-lawman:client:lawmanAlert', function(coords, text)
         if PlayerData.job.type == "leo" then
             local blip = BlipAddForCoords(joaat('BLIP_STYLE_CREATOR_DEFAULT'), coords.x, coords.y, coords.z)
             local blip2 = BlipAddForCoords(joaat('BLIP_STYLE_COP_PERSISTENT'), coords.x, coords.y, coords.z)
-            local blipText = Lang and Lang:t('lang12') .. 'Banca' or 'Alerta - Jaff', {value = text}
+            local blipText = Lang and Lang:t('lang12') .. 'Banca' or 'Persoane - Jefuite', {value = text}
             SetBlipSprite(blip, joaat('blip_ambient_law'))
             SetBlipSprite(blip2, joaat('blip_overlay_ring'))
             BlipAddModifier(blip, joaat('BLIP_MODIFIER_AREA_PULSE'))
@@ -167,14 +167,14 @@ Citizen.CreateThread(function()
 	while true do
 		Wait(0)
 		local pos, awayFromObject = GetEntityCoords(PlayerPedId()), true
-		local object = Citizen.InvokeNative(0xF7424890E4A094C0, 3483244267, 0)
+        local object = Citizen.InvokeNative(0xF7424890E4A094C0, 576950805, 0)
 		if object ~= 0 and robberystarted == true and dynamiteused == false then
 			local objectPos = GetEntityCoords(object)
 			if #(pos - objectPos) < 3.0 then
 				awayFromObject = false
 				DrawText3Ds(objectPos.x, objectPos.y, objectPos.z + 1.0, "Pune Dinamita la Usa [J]")
 				if IsControlJustReleased(0, RSGCore.Shared.Keybinds['J']) then
-					TriggerEvent('rsg-rhodesbankheist:client:boom')
+                    TriggerEvent('rsg-valentinebankheist:client:boom')
 				end
 			end
 		end
@@ -185,13 +185,13 @@ Citizen.CreateThread(function()
 end)
 
 -- blow vault doors
-RegisterNetEvent('rsg-rhodesbankheist:client:boom')
-AddEventHandler('rsg-rhodesbankheist:client:boom', function()
+RegisterNetEvent('rsg-valentinebankheist:client:boom')
+AddEventHandler('rsg-valentinebankheist:client:boom', function()
 	if robberystarted == true then
 		local hasItem = RSGCore.Functions.HasItem('dynamite', 1)
 		if hasItem then
 			dynamiteused = true
-			TriggerServerEvent('rsg-rhodesbankheist:server:removeItem', 'dynamite', 1)
+            TriggerServerEvent('rsg-valentinebankheist:server:removeItem', 'dynamite', 1)
 			local playerPed = PlayerPedId()
 			TaskStartScenarioInPlace(playerPed, GetHashKey('WORLD_HUMAN_CROUCH_INSPECT'), 5000, true, false, false, false)
 			Wait(5000)
@@ -203,12 +203,12 @@ AddEventHandler('rsg-rhodesbankheist:client:boom', function()
 			FreezeEntityPosition(prop,true)
 			TriggerEvent('rNotify:NotifyLeft', "Explozibil pus pe usa!", "Ascundete sau Fugi ", "generic_textures", "tick", 4000)
 			Wait(10000)
-			AddExplosion(1282.2947, -1308.442, 77.03968, 25 , 5000.0 ,true , false , 27)
+            AddExplosion(-307.24, 767.2, 118.7, 25 , 5000.0 ,true , false , 27)
 			DeleteObject(prop)
-			Citizen.InvokeNative(0x6BAB9442830C7F53, 3483244267, 0)
-			TriggerEvent('rsg-rhodesbankheist:client:policenpc')
+            Citizen.InvokeNative(0x6BAB9442830C7F53, 576950805, 0)
+            TriggerEvent('rsg-valentinebankheist:client:policenpc')
 			local alertcoords = GetEntityCoords(PlayerPedId())
-			TriggerServerEvent('police:server:policeAlert', 'Banca Rhodes este jefuită')
+			TriggerServerEvent('police:server:policeAlert', 'Banca Valentine este jefuită')
 		else
 			TriggerEvent('rNotify:NotifyLeft', "Ai nevoie de dinamita !", "Dute si Fa Rost", "generic_textures", "tick", 4000)
 		end
@@ -219,9 +219,9 @@ end)
 ------------------------------------------------------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-	exports['rsg-core']:createPrompt('vault1', vector3(1288.6381, -1313.991, 77.039779), 0xF3830D8E, 'Jefuieste Seiful', {
+    exports['rsg-core']:createPrompt('valvault1', vector3(-308.26, 762.72, 118.7), 0xF3830D8E, 'Jefuieste Seiful', {
 		type = 'client',
-		event = 'rsg-rhodesbankheist:client:checkvault1',
+        event = 'rsg-valentinebankheist:client:checkvault1',
 		args = {},
 	})
 end)
@@ -260,7 +260,7 @@ exports('safe_crack', start_safe_crack)
 
 -----------------------------------------------------
 -- loot vault1
-RegisterNetEvent('rsg-rhodesbankheist:client:checkvault1', function()
+RegisterNetEvent('rsg-valentinebankheist:client:checkvault1', function()
     local player = PlayerPedId()
     SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
     if robberystarted == true and vault1 == false then
@@ -279,7 +279,7 @@ RegisterNetEvent('rsg-rhodesbankheist:client:checkvault1', function()
                 Wait(10000)
                 ClearPedTasks(player)
                 SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
-                TriggerServerEvent('rsg-rhodesbankheist:server:reward')
+            TriggerServerEvent('rsg-valentinebankheist:server:reward')
                 vault1 = true
             else
                 TriggerEvent('rNotify:NotifyLeft', "Nu poti Jefui Seiful !", "Dorele", "generic_textures", "tick", 4000)
@@ -292,9 +292,9 @@ end)
 -----------------------------------------------------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-	exports['rsg-core']:createPrompt('vault2', vector3(1286.2711, -1315.305, 77.039764), 0xF3830D8E, 'Jefuieste Seiful', {
+    exports['rsg-core']:createPrompt('valvault2', vector3(-308.7, 765.22, 118.7), 0xF3830D8E, 'Jefuieste Seiful', {
 		type = 'client',
-		event = 'rsg-rhodesbankheist:client:checkvault1',
+        event = 'rsg-valentinebankheist:client:checkvault2',
 		args = {},
 	})
 end)
@@ -333,10 +333,10 @@ exports('safe_crack', start_safe_crack)
 
 -----------------------------------------------------
 -- loot vault2
-RegisterNetEvent('rsg-rhodesbankheist:client:checkvault2', function()
+RegisterNetEvent('rsg-valentinebankheist:client:checkvault2', function()
     local player = PlayerPedId()
     SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
-    if robberystarted == true and vault1 == false then
+    if robberystarted == true and vault2 == false then
         exports['boii_minigames']:safe_crack({
             style = 'default', -- Style template
             difficulty = 3 -- Difficulty level (1-5 recommended)
@@ -352,8 +352,8 @@ RegisterNetEvent('rsg-rhodesbankheist:client:checkvault2', function()
                 Wait(10000)
                 ClearPedTasks(player)
                 SetCurrentPedWeapon(player, `WEAPON_UNARMED`, true)
-                TriggerServerEvent('rsg-rhodesbankheist:server:reward')
-                vault1 = true
+            TriggerServerEvent('rsg-valentinebankheist:server:reward')
+            vault2 = true
             else
                 TriggerEvent('rNotify:NotifyLeft', "Nu poti Jefui Seiful !", "Dorele", "generic_textures", "tick", 4000)
             end
@@ -373,8 +373,8 @@ function modelrequest( model )
 end
 
 -- start mission npcs
-RegisterNetEvent('rsg-rhodesbankheist:client:policenpc')
-AddEventHandler('rsg-rhodesbankheist:client:policenpc', function()
+RegisterNetEvent('rsg-valentinebankheist:client:policenpc')
+AddEventHandler('rsg-valentinebankheist:client:policenpc', function()
 	for z, x in pairs(Config.HeistNpcs) do
 	while not HasModelLoaded( GetHashKey(Config.HeistNpcs[z]["Model"]) ) do
 		Wait(500)
@@ -477,15 +477,15 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 
 Citizen.CreateThread(function()
-	exports['rsg-core']:createPrompt('rhopolicelock', vector3(1295.91, -1304.38, 77.04), RSGCore.Shared.Keybinds['J'], 'Emergency Menu', {
+    exports['rsg-core']:createPrompt('valpolicelock', vector3(-302.72, 772.64, 118.7), RSGCore.Shared.Keybinds['J'], 'Emergency Menu', {
 		type = 'client',
-		event = 'rsg-rhodesbankheist:client:bankmenu',
+        event = 'rsg-valentinebankheist:client:bankmenu',
 		args = {},
 	})
 end)
 
 -- emergency menu
-RegisterNetEvent('rsg-rhodesbankheist:client:bankmenu', function()
+RegisterNetEvent('rsg-valentinebankheist:client:bankmenu', function()
     exports['rsg-menu']:openMenu({
         {
             header = 'Emergency Menu',
@@ -496,7 +496,7 @@ RegisterNetEvent('rsg-rhodesbankheist:client:bankmenu', function()
             txt = "used by law enforcement to lock bank in an emergency",
 			icon = "fas fa-lock",
             params = {
-                event = 'rsg-rhodesbankheist:client:policelock',
+                event = 'rsg-valentinebankheist:client:policelock',
 				isServer = false,
             }
         },
@@ -505,7 +505,7 @@ RegisterNetEvent('rsg-rhodesbankheist:client:bankmenu', function()
             txt = "used by law enforcement to unlock bank in an emergency",
 			icon = "fas fa-lock-open",
             params = {
-                event = 'rsg-rhodesbankheist:client:policeunlock',
+                event = 'rsg-valentinebankheist:client:policeunlock',
 				isServer = false,
             }
         },
@@ -519,7 +519,7 @@ RegisterNetEvent('rsg-rhodesbankheist:client:bankmenu', function()
     })
 end)
 
-RegisterNetEvent('rsg-rhodesbankheist:client:policelock', function()
+RegisterNetEvent('rsg-valentinebankheist:client:policelock', function()
     RSGCore.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.job.type == "leo" then
 			-- lock doors
@@ -533,7 +533,7 @@ RegisterNetEvent('rsg-rhodesbankheist:client:policelock', function()
     end)
 end)
 
-RegisterNetEvent('rsg-rhodesbankheist:client:policeunlock', function()
+RegisterNetEvent('rsg-valentinebankheist:client:policeunlock', function()
     RSGCore.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.job.type == "leo" then
 			-- lock doors
